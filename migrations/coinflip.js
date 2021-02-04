@@ -1,7 +1,8 @@
-const Contract = artifacts.require("Migrations");
+const Contract = artifacts.require("CoinFlip");
 
 module.exports = function(deployer, network, accounts) {
      let options = {};
+     let tokens = 0;
 
      // development network deployment settings
      if (network == "development") {
@@ -11,12 +12,14 @@ module.exports = function(deployer, network, accounts) {
 
           options = {
                from: _address,
-               value: 0,
+               value: 10000000000000000000,
           };
+
+          tokens = 100;
 
      }
 
      // Deploy the contract with the specified info
-     deployer.deploy(Contract, options);
+     deployer.deploy(Contract, tokens, options);
 
 };
