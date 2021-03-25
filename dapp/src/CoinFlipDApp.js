@@ -1,3 +1,4 @@
+import Web3 from 'web3'
 import React from 'react';
 
 import Grid from '@material-ui/core/Grid';
@@ -6,6 +7,9 @@ import CardLogo from './logo.png';
 import CardImage from './image.png';
 
 import MediaCard from './components/MediaCard'
+import DepositFunds from './components/DepositFunds'
+import PlaceBet from './components/PlaceBet'
+import WithdrawFunds from './components/WithdrawFunds'
 
 import { makeStyles } from '@material-ui/core/styles';
 
@@ -24,116 +28,115 @@ const useStyles = makeStyles((theme) => ({
 export default function CoinFlipDApp(props) {
      const classes = useStyles();
 
-     const handleClick = (type, value) => {
-          alert('ON_CLICK::EXCHANGE - TYPE:[' + type + '] VALUE:[' + value + ']');
-     };
+     const config = {
 
-     const web3_info = {
+          betting: {
 
-          contract: {
-               address: '0xdb52cc2086e6837E94cBCB2a1E144C2C986d1ad1',
-               owner: '0xdb52cc2086e6837E94cBCB2a1E144C2C986d1ad1',
-               balance: 100,
-               tokens: 1000000,
+               title: 'Betting (Player)',
+               subtitle: 'Try your luck by flipping coins',
+
+               media: {
+                    logo: CardLogo,
+                    image: CardImage,
+               },
+
+               slider: {
+                    default: 5,
+                    minimum: 1,
+                    maximum: 10,
+               },
+
+               function: props.web3.onFlipCoin,
+
           },
 
-          player: {
-               address: '0xdb52cc2086e6837E94cBCB2a1E144C2C986d1ad1',
-               balance: 100,
-               tokens: 15,
+          deposit: {
+
+               title: 'Deposit (Owner)',
+               subtitle: 'Deposit funds to contract',
+
+               media: {
+                    logo: CardLogo,
+                    image: CardImage,
+               },
+
+               slider: {
+                    default: 5,
+                    minimum: 1,
+                    maximum: props.web3.player.balance.eth,
+               },
+
+               textfield: {
+                    default: 1,
+               },
+
+               function: props.web3.onDepositFunds,
+
           },
 
-          card: {
+          withdraw: {
 
-               betting: {
+               title: 'Withdraw (Owner)',
+               subtitle: 'Withdraw funds from contract',
 
-                    title: 'Betting',
-                    subtitle: 'Try your luck by flipping a coin',
-
-                    media: {
-                         logo: CardLogo,
-                         image: CardImage,
-                    },
-
-                    slider: {
-                         default: 5,
-                         minimum: 1,
-                         maximum: 10,
-                    },
-
-                    function: {
-                         placeBet: handleClick,
-                    },
-
+               media: {
+                    logo: CardLogo,
+                    image: CardImage,
                },
 
-               contract: {
-
-                    title: 'Contract',
-                    subtitle: 'SmartContract information',
-
-                    media: {
-                         logo: CardLogo,
-                         image: CardImage,
-                    },
-
-                    slider: {
-                         default: 5,
-                         minimum: 1,
-                         maximum: 10,
-                    },
-
-                    function: {
-                         placeBet: handleClick,
-                    },
-
+               slider: {
+                    default: 5,
+                    minimum: 1,
+                    maximum: props.web3.contract.balance.eth,
                },
 
-               exchange: {
-
-                    title: 'Exchange',
-                    subtitle: 'Buy & Sell CoinFlip tokens',
-
-                    media: {
-                         logo: CardLogo,
-                         image: CardImage,
-                    },
-
-                    slider: {
-                         default: 5,
-                         minimum: 1,
-                         maximum: 10,
-                    },
-
-                    function: {
-                         placeBet: handleClick,
-                    },
-
+               textfield: {
+                    default: 1,
                },
 
-               statistics: {
-
-                    title: 'Statistics',
-                    subtitle: 'Statistics relating to the player',
-
-                    media: {
-                         logo: CardLogo,
-                         image: CardImage,
-                    },
-
-                    slider: {
-                         default: 5,
-                         minimum: 1,
-                         maximum: 10,
-                    },
-
-                    function: {
-                         placeBet: handleClick,
-                    },
-
-               },
+               function: props.web3.onWithdrawFunds,
 
           },
+
+     }
+
+     let grid_content = (
+          <Grid container justify="center" spacing={3}>
+
+               <Grid key={0} item>
+                    <MediaCard
+                         web3={props.web3}
+                         config={config.betting}
+                         content={<PlaceBet web3={props.web3} config={config.betting} />}
+                    />
+               </Grid>
+
+          </Grid>
+     )
+
+     if (props.web3.is_owner) {
+
+          grid_content = (
+               <Grid container justify="center" spacing={3}>
+
+                    <Grid key={0} item>
+                         <MediaCard
+                              web3={props.web3}
+                              config={config.deposit}
+                              content={<DepositFunds web3={props.web3} config={config.deposit} />}
+                         />
+                    </Grid>
+
+                    <Grid key={1} item>
+                         <MediaCard
+                              web3={props.web3}
+                              config={config.withdraw}
+                              content={<WithdrawFunds web3={props.web3} config={config.withdraw} />}
+                         />
+                    </Grid>
+
+               </Grid>
+          )
 
      }
 
@@ -141,49 +144,7 @@ export default function CoinFlipDApp(props) {
 
           <Grid container className={classes.root} spacing={3}>
                <Grid item xs={12}>
-                    <Grid container justify="center" spacing={3}>
-
-                         <Grid key={0} item>
-                              <MediaCard
-                                   contract={web3_info.contract}
-                                   player={web3_info.player}
-                                   config={web3_info.card.betting}
-                                   content={<div><p>This is the MediaCard tag's content for CardContent tag</p></div>}
-                                   actions={<div><p>This is the MediaCard tag's content for CardActions tag</p></div>}
-                              />
-                         </Grid>
-
-                         <Grid key={1} item>
-                              <MediaCard
-                                   contract={web3_info.contract}
-                                   player={web3_info.player}
-                                   config={web3_info.card.contract}
-                                   content={<div><p>This is the MediaCard tag's content for CardContent tag</p></div>}
-                                   actions={<div><p>This is the MediaCard tag's content for CardActions tag</p></div>}
-                              />
-                         </Grid>
-
-                         <Grid key={2} item>
-                              <MediaCard
-                                   contract={web3_info.contract}
-                                   player={web3_info.player}
-                                   config={web3_info.card.exchange}
-                                   content={<div><p>This is the MediaCard tag's content for CardContent tag</p></div>}
-                                   actions={<div><p>This is the MediaCard tag's content for CardActions tag</p></div>}
-                              />
-                         </Grid>
-
-                         <Grid key={3} item>
-                              <MediaCard
-                                   contract={web3_info.contract}
-                                   player={web3_info.player}
-                                   config={web3_info.card.statistics}
-                                   content={<div><p>This is the MediaCard tag's content for CardContent tag</p></div>}
-                                   actions={<div><p>This is the MediaCard tag's content for CardActions tag</p></div>}
-                              />
-                         </Grid>
-
-                    </Grid>
+                    {grid_content}
                </Grid>
           </Grid>
 

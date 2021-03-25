@@ -1,13 +1,13 @@
 import React from 'react';
 
-import CoinFlipDApp from './CoinFlipDApp';
+import DApps from './DApps';
 import InspectraNetTheme from './InspectraNetTheme';
 
 export default function MainWindow() {
 
      return (
           <InspectraNetTheme>
-               <CoinFlipDApp />
+               <DApps />
           </InspectraNetTheme>
      );
 

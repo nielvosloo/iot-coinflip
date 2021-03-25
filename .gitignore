@@ -21,6 +21,8 @@ migrations/enabled
 .yarnrc
 
 dapp/node_modules
+dapp/package-lock.json
+dapp/yarn.lock
 dapp/.pnp
 dapp/.pnp.js
 dapp/coverage

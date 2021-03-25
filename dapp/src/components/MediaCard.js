@@ -44,14 +44,7 @@ const useStyles = makeStyles((theme) => ({
 
 export default function MediaCard(props) {
      const classes = useStyles();
-     const [value, setValue] = React.useState(props.config.slider.default);
-
-     const handleChange = (event, newValue) => {
-          if (newValue > props.player.tokens) {
-               newValue = props.player.tokens;
-          }
-          setValue(newValue);
-     };
+     const disabled = (props.web3.is_owner || props.web3.player.balance.eth < 1);
 
      return (
           <Card variant="outlined" className={classes.root}>
@@ -96,25 +89,7 @@ export default function MediaCard(props) {
 
                <CardMedia title={props.config.title} image={props.config.media.image} className={classes.media} />
 
-               <CardContent>
-                    <Typography variant="h6">Available Balance : {props.player.tokens} TKNS</Typography>
-                    <Box pt={7} pb={1}>
-                         <Slider
-                              valueLabelDisplay="on"
-                              aria-labelledby="discrete-slider"
-                              marks step={1} min={props.config.slider.minimum} max={props.config.slider.maximum}
-                              value={value} onChange={handleChange}
-                              disabled={!props.player.tokens}
-                         />
-                         <Typography id="discrete-slider" align="left" variant="subtitle2" color="textSecondary">Betting Amount</Typography>
-                    </Box>
-               </CardContent>
-
-               <CardActions>
-                    <Button variant="contained" fullWidth onClick={() => { props.config.function.placeBet(1, value) }} disabled={!props.player.tokens} color="primary">Heads</Button>
-                    <Button variant="contained" fullWidth onClick={() => { props.config.function.placeBet(2, value) }} disabled={!props.player.tokens} color="default">Random</Button>
-                    <Button variant="contained" fullWidth onClick={() => { props.config.function.placeBet(3, value) }} disabled={!props.player.tokens} color="secondary">Tails</Button>
-               </CardActions>
+               {props.content}
 
           </Card>
      );
